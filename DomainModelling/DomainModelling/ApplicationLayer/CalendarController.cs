@@ -28,7 +28,7 @@ namespace DomainModelling.ApplicationLayer
 
             IEnumerable<Event> calendarEvents = calendar.GetAllEvents();
 
-            IEnumerable<EventViewModel> eventViewModels = calendarEvents.Select(EventToViewModel);
+            IEnumerable<EventViewModel> eventViewModels = calendarEvents.Select(EventToViewModel).ToList();
 
             var calendarViewModel = new CalendarViewModel(eventViewModels);
 
