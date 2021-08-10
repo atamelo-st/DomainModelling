@@ -35,7 +35,7 @@ namespace DomainModelling.ApplicationLayer
             return Ok(calendarViewModel);
         }
 
-        [HttpPut]
+        [HttpPut("add-regular-event")]
         public IActionResult AddRegularEvent(
             Guid id,
             [FromBody] string title,
@@ -46,14 +46,19 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            calendar.AddRegularEvent(id, title, description, date, startTime, endtime);
+            bool added = calendar.AddRegularEvent(id, title, description, date, startTime, endtime);
+
+            if (!added)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, $"Event with ID={id} already exists.");
+            }
 
             int recordsSaved = this._calendarRepo.Save(calendar);
 
             return Ok(recordsSaved);
         }
 
-        [HttpPut]
+        [HttpPut("update-regular-event")]
         public IActionResult UpdateRegularEvent(
             Guid id,
             [FromBody] string title,
@@ -64,15 +69,20 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            calendar.UpdateRegularEvent(id, title, description, date, startTime, endtime);
+            bool updated = calendar.UpdateRegularEvent(id, title, description, date, startTime, endtime);
+
+            if (!updated)
+            {
+                return NotFound($"Event with ID={id} was not found.");
+            }
 
             int recordsSaved = this._calendarRepo.Save(calendar);
 
             return Ok(recordsSaved);
         }
 
-        [HttpPut]
-        public void AddRecurringEvent(
+        [HttpPut("add-recurring-event")]
+        public IActionResult AddRecurringEvent(
             Guid id,
             [FromBody] string title,
             [FromBody] string description,
@@ -111,14 +121,22 @@ namespace DomainModelling.ApplicationLayer
 
             Calendar calendar = this._calendarRepo.Get(startDate, startDate);
 
-            calendar.AddRecurringEvent(recurringEvent);
+            bool added = calendar.AddRecurringEvent(recurringEvent);
 
-            this._calendarRepo.Save(calendar);
+            if (!added)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, $"Event with ID={id} already exists.");
+            }
+
+            int recordsSaved = this._calendarRepo.Save(calendar);
+
+            return Ok(recordsSaved);
         }
 
-        [HttpPut]
-        public void UpdateRecurringEventOccurrence(
-            [FromBody] RecurringEvent parent,
+
+        [HttpPut("update-occurrence")]
+        public IActionResult UpdateRecurringEventOccurrence(
+            [FromBody] Guid parentReccurringEventId,
             [FromBody] DateTime date,
             [FromBody] string newTitle,
             [FromBody] string newDescription,
@@ -127,14 +145,20 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            // TODO: Change to ID vs parent !!!
-            calendar.UpdateRecurringEventOccurrence(parent, newTitle, newDescription, date, newStartTime, newEndtime);
+            bool updated = calendar.UpdateRecurringEventOccurrence(parentReccurringEventId, date, newTitle, newDescription, newStartTime, newEndtime);
 
-            this._calendarRepo.Save(calendar);
+            if (!updated)
+            {
+                return NotFound();
+            }
+
+            int recordsSaved = this._calendarRepo.Save(calendar);
+
+            return Ok(recordsSaved);
         }
 
 
-        [HttpDelete]
+        [HttpDelete("delete-occurrence")]
         public IActionResult DeleteRecurringEventOccurrence(Guid parentReccurringEventId, DateTime date)
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
@@ -150,6 +174,7 @@ namespace DomainModelling.ApplicationLayer
 
             return Ok();
         }
+
 
         private static EventViewModel EventToViewModel(Event eventToConvert)
         {
@@ -167,15 +192,14 @@ namespace DomainModelling.ApplicationLayer
             }
 
             EventViewModel viewModel =
-                new EventViewModel(
-                        regularEventData.Id,
-                        regularEventData.Title,
-                        regularEventData.Description,
-                        regularEventData.Date,
-                        regularEventData.StartTime,
-                        regularEventData.EndTime,
-                        recurringEventData
-                );
+                new(
+                    regularEventData.Id,
+                    regularEventData.Title,
+                    regularEventData.Description,
+                    regularEventData.Date,
+                    regularEventData.StartTime,
+                    regularEventData.EndTime,
+                    recurringEventData);
 
             return viewModel;
         }

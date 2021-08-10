@@ -2,26 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace DomainModelling.DomainModel
 {
     public class Calendar
     {
-        //NOTE: just for a quick and dirty implementation;
-        //interval trees are needed for a prod-ready code
+        //NOTE: just for a quick and dirty implementation; interval trees are needed for a prod-ready code
         private readonly HashSet<RegularEvent> _regularEvents;
-        private readonly HashSet<RecurringEvent> _recurringEvents;
+        private readonly IDictionary<Guid, RecurringEvent> _recurringEvents;
         //NOTE: RecurringEvent(aka parent) -> occurence overrides
-        private readonly IDictionary<RecurringEvent, IList<RecurringEvent.Occurrence>> _recurringOccurrencesOverrides;
+        private readonly IDictionary<Guid, IDictionary<DateTime, RecurringEvent.Occurrence>> _recurringOccurrencesOverrides;
         private readonly IDictionary<Guid, HashSet<DateTime>> _recurringOccurrencesTombstones;
+
 
         public Calendar()
         {
             this._regularEvents = new HashSet<RegularEvent>();
-            this._recurringEvents = new HashSet<RecurringEvent>();
-            // TODO: change to RecurringEvent.Id vs RecurringEvent
-            this._recurringOccurrencesOverrides = new Dictionary<RecurringEvent, IList<RecurringEvent.Occurrence>>();
+            this._recurringEvents = new Dictionary<Guid, RecurringEvent>();
+            this._recurringOccurrencesOverrides = new Dictionary<Guid, IDictionary<DateTime, RecurringEvent.Occurrence>>();
             this._recurringOccurrencesTombstones = new Dictionary<Guid, HashSet<DateTime>>();
         }
+
+
+        public IEnumerable<Event> GetAllEvents()
+        {
+            IEnumerable<Event> events = this.GetEvents(DateTime.MinValue, DateTime.MaxValue);
+
+            return events;
+        }
+
 
         public bool AddRegularEvent(RegularEvent regularEvent)
         {
@@ -30,10 +39,10 @@ namespace DomainModelling.DomainModel
             return added;
         }
 
+
         public bool UpdateRegularEvent(RegularEvent regularEvent)
         {
-            //NOTE: since we've provided custom equality logic, only event.Id is taken into account
-            //when event is searched/deleted.
+            //NOTE: since we've provided custom equality logic, only event.Id is taken into account when event is searched/deleted.
             //So to update an already existing event, just pass in a new instance with the same Id and updated fields
             if (!this._regularEvents.Remove(regularEvent))
             {
@@ -45,6 +54,7 @@ namespace DomainModelling.DomainModel
             return updated;
         }
 
+
         public bool DeleteRegularEvent(RegularEvent regularEvent)
         {
             bool deleted = this._regularEvents.Remove(regularEvent);
@@ -52,85 +62,83 @@ namespace DomainModelling.DomainModel
             return deleted;
         }
 
+
         public bool AddRecurringEvent(RecurringEvent recurringEvent)
         {
-            bool added = this._recurringEvents.Add(recurringEvent);
-
-            return added;
-        }
-
-        public bool UpdateRecurringEvent(RecurringEvent recurringEvent)
-        {
-            if (!this._recurringEvents.Remove(recurringEvent))
+            if (this.RecurringEventExists(recurringEvent.Id))
             {
                 return false;
             }
 
-            bool updated = this._recurringEvents.Add(recurringEvent);
+            this._recurringEvents.Add(recurringEvent.Id, recurringEvent);
 
-            return updated;
+            return true;
         }
 
-        public bool UpdateRecurringEventOccurrence(RecurringEvent.Occurrence occurence)
+
+        public bool UpdateRecurringEvent(RecurringEvent recurringEvent)
         {
+            if (!this._recurringEvents.Remove(recurringEvent.Id))
+            {
+                return false;
+            }
+
+            this._recurringEvents.Add(recurringEvent.Id, recurringEvent);
+
+            return true;
+        }
+        
+
+        public bool UpdateRecurringEventOccurrence(
+            Guid parentRecurringEventId,
+            DateTime date,
+            string newTitle,
+            string newDescription,
+            DateTimeOffset newStartTime,
+            DateTimeOffset newEndTime)
+        {
+            if (!this.RecurringEventExists(parentRecurringEventId))
+            {
+                return false;
+            }
+
             //NOTE: I've chosen this semantics as the simplest - can't update a deleted occurence.
             //As an alternative, we could consider possibility of resurrecting an occurence -
             //e.g. if it was deleted by mistake, updating a deleted item would 'bring it back'..
-            if (this.IsOccurrenceDeleted(occurence))
+            if (this.IsOccurrenceDeleted(parentRecurringEventId, date))
             {
                 return false;
             }
 
             //Recurrent event has overrides?
-            if (this._recurringOccurrencesOverrides.TryGetValue(occurence.Parent, out var occurrenceOverrides))
+            if (this._recurringOccurrencesOverrides.TryGetValue(parentRecurringEventId, out var occurrenceOverrides))
             {
-
-                (RecurringEvent.Occurrence @override, int index)? found = this.FindOccurrenceOverride(occurence);
-
-                if (found != null)
-                {
-                    //If there is an old override - remove it
-                    occurrenceOverrides.RemoveAt(found.Value.index);
-                }
+                //If there is an old override - remove it
+                occurrenceOverrides.Remove(date);
             }
             else //No overrides - create it
             {
-                occurrenceOverrides = new List<RecurringEvent.Occurrence>();
-                this._recurringOccurrencesOverrides.Add(occurence.Parent, occurrenceOverrides);
+                occurrenceOverrides = new Dictionary<DateTime, RecurringEvent.Occurrence>();
+                this._recurringOccurrencesOverrides.Add(parentRecurringEventId, occurrenceOverrides);
             }
 
-            //add submitted override
-            occurrenceOverrides.Add(occurence);
-
-            return true;
-        }
-        
-        // TODO: add this API
-        public bool UpdateRecurringEventOccurrence(
-            Guid parentRecurringEventId,
-            string newTitle,
-            string newDescription,
-            DateTime newDate,
-            DateTimeOffset newStartTime,
-            DateTimeOffset newEndTime)
-        {
-            RecurringEvent parentRecurringEvent = null; //TODO: this.__recurringEvents.TryGetValue(...)
+            RecurringEvent parent = this._recurringEvents[parentRecurringEventId];
 
             var updatedOccurence =
                 new RecurringEvent.Occurrence(
-                    parentRecurringEvent,
+                    parent,
                     newTitle,
                     newDescription,
-                    newDate,
+                    date,
                     newStartTime,
-                    newEndTime
-                );
+                    newEndTime);
 
             //add submitted override
-            //occurrenceOverrides.Add(updatedOccurence);
+            occurrenceOverrides.Add(date, updatedOccurence);
 
             return true;
         }
+
 
         public bool DeleteRecurringEventOccurrence(RecurringEvent.Occurrence occurence)
         {
@@ -140,24 +148,24 @@ namespace DomainModelling.DomainModel
         }
 
  
-        public bool DeleteRecurringEventOccurrence(Guid parentReccurreingEventId, DateTime date)
+        public bool DeleteRecurringEventOccurrence(Guid parentRecurringEventId, DateTime date)
         {
-            if (!this._recurringOccurrencesTombstones.TryGetValue(parentReccurreingEventId, out var tombstones))
+            if (!this.RecurringEventExists(parentRecurringEventId))
+            {
+                return false;
+            }
+
+            if (!this._recurringOccurrencesTombstones.TryGetValue(parentRecurringEventId, out var tombstones))
             {
                 tombstones = new HashSet<DateTime>();
 
-                this._recurringOccurrencesTombstones.Add(parentReccurreingEventId, tombstones);
+                this._recurringOccurrencesTombstones.Add(parentRecurringEventId, tombstones);
             }
 
-            bool deleted = tombstones.Add(date);
+            tombstones.Add(date);
 
-            return deleted;
-        }
-
-
-        public IEnumerable<Event> GetAllEvents()
-        {
-            return this.GetEvents(DateTime.MinValue, DateTime.MaxValue);
+            // NOTE: idempotent delete
+            return true;
         }
 
         //NOTE: this code craves for discriminated unions :)
@@ -173,7 +181,7 @@ namespace DomainModelling.DomainModel
                 }
             }
 
-            foreach (RecurringEvent recurringEvent in this._recurringEvents)
+            foreach (RecurringEvent recurringEvent in this._recurringEvents.Values)
             {
                 IEnumerable<RecurringEvent.Occurrence> recurrentOccurrences =
                     recurringEvent
@@ -190,30 +198,27 @@ namespace DomainModelling.DomainModel
             }
         }
 
+
         private RecurringEvent.Occurrence ResolveOccurenceOverride(RecurringEvent.Occurrence recurringOccurrence)
         {
-            (RecurringEvent.Occurrence @override, int index)? found = this.FindOccurrenceOverride(recurringOccurrence);
+            RecurringEvent.Occurrence @override =
+                this.FindOccurrenceOverride(recurringOccurrence.Parent.Id, recurringOccurrence.Date);
 
-            RecurringEvent.Occurrence resolvedOverride = found?.@override ?? recurringOccurrence;
+            RecurringEvent.Occurrence resolvedOverride = @override ?? recurringOccurrence;
 
             return resolvedOverride;
         }
 
-        //NOTE: brute-force search for demo only :)
-        private (RecurringEvent.Occurrence @override, int index)? FindOccurrenceOverride(RecurringEvent.Occurrence recurringOccurrence)
+
+        private RecurringEvent.Occurrence FindOccurrenceOverride(Guid recurringOccurenceParentId, DateTime date)
         {
             //Recurrent event has overrides?
-            if (this._recurringOccurrencesOverrides.TryGetValue(recurringOccurrence.Parent, out var occurrenceOverrides))
+            if (this._recurringOccurrencesOverrides.TryGetValue(recurringOccurenceParentId, out var occurrenceOverrides))
             {
                 //NOTE: the compound primary key for an override occurence
                 // is (Parent, Date) - i.e. for a given recurring event there could be only one
-                // occurence with a unique combination of those/
-                (RecurringEvent.Occurrence occurrenceOverride, int overrideItemindex)? found =
-                    occurrenceOverrides
-                        //Are there overrides for the occurrence's date?
-                        .Where(ovrd => ovrd.Date == recurringOccurrence.Date)
-                        .Select((ovrd, index) => ((RecurringEvent.Occurrence, int)?)(ovrd, index))
-                        .SingleOrDefault();
+                // occurence with a unique combination of those
+                occurrenceOverrides.TryGetValue(date, out RecurringEvent.Occurrence found);
 
                 return found;
             }
@@ -221,16 +226,31 @@ namespace DomainModelling.DomainModel
             return null;
         }
 
-        private bool IsOccurrenceDeleted(RecurringEvent.Occurrence occurence)
+
+        private bool IsOccurrenceDeleted(RecurringEvent.Occurrence occurrence)
+        { 
+            return this.IsOccurrenceDeleted(occurrence.Parent.Id, occurrence.Date);
+        }
+
+
+        private bool IsOccurrenceDeleted(Guid parentRecurringEventId, DateTime date)
         {
-            if (this._recurringOccurrencesTombstones.TryGetValue(occurence.Parent.Id, out var dates))
+            if (this._recurringOccurrencesTombstones.TryGetValue(parentRecurringEventId, out var dates))
             {
-                bool isDeleted = dates.Contains(occurence.Date);
+                bool isDeleted = dates.Contains(date);
 
                 return isDeleted;
             }
 
             return false;
+        }
+
+
+        private bool RecurringEventExists(Guid recurringEventId)
+        {
+            bool exists = this._recurringEvents.ContainsKey(recurringEventId);
+
+            return exists;
         }
     }
 }
