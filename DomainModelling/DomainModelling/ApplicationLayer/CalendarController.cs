@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using DomainModelling.DomainModel;
 using DomainModelling.Common;
 using DomainModelling.DataAccessLayer;
-using static DomainModelling.DomainModel.RecurringEvent;
+
 
 namespace DomainModelling.ApplicationLayer
 {
@@ -26,22 +26,9 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(periodStart, periodEnd);
 
-            //prepare/expand events to render on the UI
             IEnumerable<Event> calendarEvents = calendar.GetAllEvents();
 
             return calendarEvents;
-        }
-
-
-        [HttpGet]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
         }
 
         [HttpPut]
@@ -55,8 +42,7 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            // TODO: Change to GUID !!!
-            calendar.AddRegularEvent(1, title, description, date, startTime, endtime);
+            calendar.AddRegularEvent(id, title, description, date, startTime, endtime);
 
             this._calendarRepo.Save(calendar);
 
@@ -73,8 +59,7 @@ namespace DomainModelling.ApplicationLayer
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            // TODO: Change to GUID !!!
-            calendar.UpdateRegularEvent(1, title, description, date, startTime, endtime);
+            calendar.UpdateRegularEvent(id, title, description, date, startTime, endtime);
 
             this._calendarRepo.Save(calendar);
         }
@@ -91,11 +76,12 @@ namespace DomainModelling.ApplicationLayer
             [FromBody] RepeatPattern.Weekly.DaysOfWeek? activeDays,
             [FromBody] int repeatInterval)
         {
-            // TODO: Change to GUID !!!
+            bool isDailyEvent = activeDays == null;
+
             RecurringEvent recurringEvent =
-                activeDays == null ?
+                isDailyEvent ?
                     RecurringEvent.Daily(
-                        1,
+                        id,
                         title,
                         description,
                         startDate,
@@ -105,7 +91,7 @@ namespace DomainModelling.ApplicationLayer
                         repeatInterval
                     ) :
                     RecurringEvent.Weekly(
-                        1,
+                        id,
                         title,
                         description,
                         startDate,
@@ -142,13 +128,20 @@ namespace DomainModelling.ApplicationLayer
 
 
         [HttpDelete]
-        public void DeleteRecurringEventOccurrence(Occurrence occurrenceToDelete)
+        public IActionResult DeleteRecurringEventOccurrence(Guid parentReccurringEventId, DateTime date)
         {
-            Calendar calendar = this._calendarRepo.Get(occurrenceToDelete.Date, occurrenceToDelete.Date);
+            Calendar calendar = this._calendarRepo.Get(date, date);
 
-            calendar.DeleteRecurringEventOccurrence(occurrenceToDelete);
+            bool deleted = calendar.DeleteRecurringEventOccurrence(parentReccurringEventId, date);
+
+            if (!deleted)
+            {
+                NotFound($" Couldn't find: {parentReccurringEventId}/{date}");
+            }
 
             this._calendarRepo.Save(calendar);
+
+            return Ok();
         }
     }
 }

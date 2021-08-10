@@ -6,7 +6,7 @@ namespace DomainModelling.DomainModel
 {
     public abstract class Event
     {
-        public int Id { get; }
+        public Guid Id { get; }
         public string Title { get; }
         public string Description { get; }
         public DateTimeOffset StartTime { get; }
@@ -14,9 +14,9 @@ namespace DomainModelling.DomainModel
         //TODO: use TimeSpan instead?
         public DateTimeOffset EndTime { get; }
 
-        protected Event(int id, string title, string description, DateTimeOffset startTime, DateTimeOffset endTime)
+        protected Event(Guid id, string title, string description, DateTimeOffset startTime, DateTimeOffset endTime)
         {
-            Guard.ThrowIf(id <= 0, nameof(id));
+            Guard.ThrowIf(id == default, nameof(id));
             Guard.ThrowIf(string.IsNullOrWhiteSpace(title), nameof(title));
             Guard.ThrowIf(string.IsNullOrWhiteSpace(description), nameof(description));
             Guard.ThrowIf(startTime == default, nameof(startTime));

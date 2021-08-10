@@ -9,7 +9,7 @@ namespace DomainModelling.DomainModel
         public DateTime Date { get; }
 
         public RegularEvent(
-            int id,
+            Guid id,
             string title,
             string description,
             DateTime date,
