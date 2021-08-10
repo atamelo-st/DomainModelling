@@ -112,9 +112,12 @@ namespace DomainModelling.DomainModel
             return weeklyRecurringEvent;
         }
 
+        //NOTE: this inheritance is just a shortcut; RecurringEvent.Occurence does NOT
+        //seem to be in IS-A relationship with the RegularEvent
         public class Occurrence : RegularEvent
         {
             //NOTE We don't use this id for any operations
+            //it's a smell and an indication of a shortcuts in design
             //a good design shouldn't have it at all in this case
             private static readonly Guid expandedOccurrenceStandInId = Guid.Empty;
 
