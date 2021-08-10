@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using DomainModelling.DomainModel;
 using DomainModelling.Common;
 using DomainModelling.DataAccessLayer;
-
+using DomainModelling.ApplicationLayer.Presentation;
+using Microsoft.AspNetCore.Http;
 
 namespace DomainModelling.ApplicationLayer
 {
@@ -21,18 +22,21 @@ namespace DomainModelling.ApplicationLayer
         }
 
         [HttpGet]
-        // TODO: ViewModel!!!
-        public IEnumerable<Event> Get(DateTime periodStart, DateTime periodEnd)
+        public IActionResult Get(DateTime periodStart, DateTime periodEnd)
         {
             Calendar calendar = this._calendarRepo.Get(periodStart, periodEnd);
 
             IEnumerable<Event> calendarEvents = calendar.GetAllEvents();
 
-            return calendarEvents;
+            IEnumerable<EventViewModel> eventViewModels = calendarEvents.Select(EventToViewModel);
+
+            var calendarViewModel = new CalendarViewModel(eventViewModels);
+
+            return Ok(calendarViewModel);
         }
 
         [HttpPut]
-        public void AddRegularEvent(
+        public IActionResult AddRegularEvent(
             Guid id,
             [FromBody] string title,
             [FromBody] string description,
@@ -44,12 +48,13 @@ namespace DomainModelling.ApplicationLayer
 
             calendar.AddRegularEvent(id, title, description, date, startTime, endtime);
 
-            this._calendarRepo.Save(calendar);
+            int recordsSaved = this._calendarRepo.Save(calendar);
 
+            return Ok(recordsSaved);
         }
 
         [HttpPut]
-        public void UpdateRegularEvent(
+        public IActionResult UpdateRegularEvent(
             Guid id,
             [FromBody] string title,
             [FromBody] string description,
@@ -61,7 +66,9 @@ namespace DomainModelling.ApplicationLayer
 
             calendar.UpdateRegularEvent(id, title, description, date, startTime, endtime);
 
-            this._calendarRepo.Save(calendar);
+            int recordsSaved = this._calendarRepo.Save(calendar);
+
+            return Ok(recordsSaved);
         }
 
         [HttpPut]
@@ -136,12 +143,41 @@ namespace DomainModelling.ApplicationLayer
 
             if (!deleted)
             {
-                NotFound($" Couldn't find: {parentReccurringEventId}/{date}");
+                return NotFound($" Couldn't find: {parentReccurringEventId}/{date}");
             }
 
             this._calendarRepo.Save(calendar);
 
             return Ok();
+        }
+
+        private static EventViewModel EventToViewModel(Event eventToConvert)
+        {
+            // just a safeguard in case somebody create a child of Event that we don't know of
+            if (eventToConvert is not RegularEvent regularEventData)
+            {
+                throw new ArgumentException($"Unsupported event type {eventToConvert.GetType().FullName}");
+            }
+
+            RecurringEventData recurringEventData = null;
+
+            if (eventToConvert is RecurringEvent.Occurrence recurringEventOccurence)
+            {
+                recurringEventData = new RecurringEventData(recurringEventOccurence.Parent.Id, recurringEventOccurence.Parent.RepeatPattern);
+            }
+
+            EventViewModel viewModel =
+                new EventViewModel(
+                        regularEventData.Id,
+                        regularEventData.Title,
+                        regularEventData.Description,
+                        regularEventData.Date,
+                        regularEventData.StartTime,
+                        regularEventData.EndTime,
+                        recurringEventData
+                );
+
+            return viewModel;
         }
     }
 }

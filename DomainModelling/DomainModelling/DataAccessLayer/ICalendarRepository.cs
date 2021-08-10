@@ -10,6 +10,6 @@ namespace DomainModelling.DataAccessLayer
     {
         Calendar Get(DateTime periodStart, DateTime periodEnd);
 
-        void Save(Calendar calendar);
+        int Save(Calendar calendar);
     }
 }

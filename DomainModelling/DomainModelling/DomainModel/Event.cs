@@ -11,7 +11,7 @@ namespace DomainModelling.DomainModel
         public string Description { get; }
         public DateTimeOffset StartTime { get; }
 
-        //TODO: use TimeSpan instead?
+        //TODO: use TimeSpan instead??
         public DateTimeOffset EndTime { get; }
 
         protected Event(Guid id, string title, string description, DateTimeOffset startTime, DateTimeOffset endTime)
