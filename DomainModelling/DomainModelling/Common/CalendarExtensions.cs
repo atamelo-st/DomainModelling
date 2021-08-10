@@ -10,7 +10,7 @@ namespace DomainModelling.Common
 
         public static void AddRegularEvent(
             this Calendar calendar,
-            int id,
+            Guid id,
             string title,
             string description,
             DateTime date,
@@ -24,7 +24,7 @@ namespace DomainModelling.Common
 
         public static void UpdateRegularEvent(
             this Calendar calendar,
-            int id,
+            Guid id,
             string newTitle,
             string newDescription,
             DateTime newDate,

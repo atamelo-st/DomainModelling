@@ -12,15 +12,15 @@ namespace DomainModelling.DomainModel
         private readonly HashSet<RecurringEvent> _recurringEvents;
         //NOTE: RecurringEvent(aka parent) -> occurence overrides
         private readonly IDictionary<RecurringEvent, IList<RecurringEvent.Occurrence>> _recurringOccurrencesOverrides;
-        private readonly IDictionary<RecurringEvent, HashSet<DateTime>> _recurringOccurrencesTombstones;
+        private readonly IDictionary<Guid, HashSet<DateTime>> _recurringOccurrencesTombstones;
 
         public Calendar()
         {
             this._regularEvents = new HashSet<RegularEvent>();
             this._recurringEvents = new HashSet<RecurringEvent>();
-            //TODO: store just as an Id - more practical; API could work both via .Parent and .Parent.Id
+            // TODO: change to RecurringEvent.Id vs RecurringEvent
             this._recurringOccurrencesOverrides = new Dictionary<RecurringEvent, IList<RecurringEvent.Occurrence>>();
-            this._recurringOccurrencesTombstones = new Dictionary<RecurringEvent, HashSet<DateTime>>();
+            this._recurringOccurrencesTombstones = new Dictionary<Guid, HashSet<DateTime>>();
         }
 
         public bool AddRegularEvent(RegularEvent regularEvent)
@@ -104,21 +104,56 @@ namespace DomainModelling.DomainModel
 
             return true;
         }
+        
+        // TODO: add this API
+        public bool UpdateRecurringEventOccurrence(
+            Guid parentRecurringEventId,
+            string newTitle,
+            string newDescription,
+            DateTime newDate,
+            DateTimeOffset newStartTime,
+            DateTimeOffset newEndTime)
+        {
+            RecurringEvent parentRecurringEvent = null; //TODO: this.__recurringEvents.TryGetValue(...)
 
-        //TODO: no need for the entire occurence; .Parent and .Date are enough
+            var updatedOccurence =
+                new RecurringEvent.Occurrence(
+                    parentRecurringEvent,
+                    newTitle,
+                    newDescription,
+                    newDate,
+                    newStartTime,
+                    newEndTime
+                );
+
+            //add submitted override
+            //occurrenceOverrides.Add(updatedOccurence);
+
+            return true;
+        }
+
         public bool DeleteRecurringEventOccurrence(RecurringEvent.Occurrence occurence)
         {
-            if (!this._recurringOccurrencesTombstones.TryGetValue(occurence.Parent, out var tombstones))
-            {
-                tombstones = new HashSet<DateTime>();
-
-                this._recurringOccurrencesTombstones.Add(occurence.Parent, tombstones);
-            }
-
-            bool deleted = tombstones.Add(occurence.Date);
+            bool deleted = this.DeleteRecurringEventOccurrence(occurence.Parent.Id, occurence.Date);
 
             return deleted;
         }
+
+ 
+        public bool DeleteRecurringEventOccurrence(Guid parentReccurreingEventId, DateTime date)
+        {
+            if (!this._recurringOccurrencesTombstones.TryGetValue(parentReccurreingEventId, out var tombstones))
+            {
+                tombstones = new HashSet<DateTime>();
+
+                this._recurringOccurrencesTombstones.Add(parentReccurreingEventId, tombstones);
+            }
+
+            bool deleted = tombstones.Add(date);
+
+            return deleted;
+        }
+
 
         public IEnumerable<Event> GetAllEvents()
         {
@@ -188,7 +223,7 @@ namespace DomainModelling.DomainModel
 
         private bool IsOccurrenceDeleted(RecurringEvent.Occurrence occurence)
         {
-            if (this._recurringOccurrencesTombstones.TryGetValue(occurence.Parent, out var dates))
+            if (this._recurringOccurrencesTombstones.TryGetValue(occurence.Parent.Id, out var dates))
             {
                 bool isDeleted = dates.Contains(occurence.Date);
 

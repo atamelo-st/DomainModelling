@@ -15,7 +15,7 @@ namespace DomainModelling.DomainModel
         public RepeatPattern RepeatPattern { get; }
 
         private RecurringEvent(
-            int id,
+            Guid id,
             string title,
             string description,
             DateTime startDate,
@@ -62,7 +62,7 @@ namespace DomainModelling.DomainModel
         }
 
         public static RecurringEvent Daily(
-            int id,
+            Guid id,
             string title,
             string description,
             DateTime startDate,
@@ -87,7 +87,7 @@ namespace DomainModelling.DomainModel
         }
 
         public static RecurringEvent Weekly(
-            int id,
+            Guid id,
             string title,
             string description,
             DateTime startDate,
@@ -116,7 +116,7 @@ namespace DomainModelling.DomainModel
         {
             //NOTE We don't use this id for any operations
             //a good design shouldn't have it at all in this case
-            private const int expandedOccurrenceStandInId = int.MinValue;
+            private static readonly Guid expandedOccurrenceStandInId = Guid.Empty;
 
             public RecurringEvent Parent { get; }
             public Occurrence(
