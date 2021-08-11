@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModelling", "DomainMo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{83BA3A7C-FD8B-45F7-9C87-7844A070C0BA}"
 	ProjectSection(SolutionItems) = preProject
-		Calculator.feature = Calculator.feature
+		test.feature = test.feature
 	EndProjectSection
 EndProject
 Global

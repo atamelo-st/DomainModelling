@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DomainModelling.DomainModel.DomainEvents;
 
 
 namespace DomainModelling.DomainModel
@@ -8,11 +9,14 @@ namespace DomainModelling.DomainModel
     public class Calendar
     {
         //NOTE: just for a quick and dirty implementation; interval trees are needed for a prod-ready code
-        private readonly HashSet<RegularEvent> _regularEvents;
+        private readonly HashSet<RegularEvent> _regularEvents; //TODO: move to Dictionary
         private readonly IDictionary<Guid, RecurringEvent> _recurringEvents;
         //NOTE: RecurringEvent(aka parent) -> occurence overrides
         private readonly IDictionary<Guid, IDictionary<DateTime, RecurringEvent.Occurrence>> _recurringOccurrencesOverrides;
         private readonly IDictionary<Guid, HashSet<DateTime>> _recurringOccurrencesTombstones;
+        private readonly List<DomainEvent> _domainEvents;
+
+        public IEnumerable<DomainEvent> DomainEvents { get => this._domainEvents; }
 
 
         public Calendar()
@@ -21,6 +25,7 @@ namespace DomainModelling.DomainModel
             this._recurringEvents = new Dictionary<Guid, RecurringEvent>();
             this._recurringOccurrencesOverrides = new Dictionary<Guid, IDictionary<DateTime, RecurringEvent.Occurrence>>();
             this._recurringOccurrencesTombstones = new Dictionary<Guid, HashSet<DateTime>>();
+            this._domainEvents = new List<DomainEvent>();
         }
 
 
@@ -35,6 +40,13 @@ namespace DomainModelling.DomainModel
         public bool AddRegularEvent(RegularEvent regularEvent)
         {
             bool added = this._regularEvents.Add(regularEvent);
+
+            if (added)
+            {
+                var regularEventAdded = new DomainEvent.RegularEventAdded(regularEvent);
+
+                this.PublishDomainEvent(regularEventAdded);
+            }
 
             return added;
         }
@@ -51,6 +63,15 @@ namespace DomainModelling.DomainModel
 
             bool updated = this._regularEvents.Add(regularEvent);
 
+            if (updated)
+            {
+                RegularEvent originalEvent = null; //TODO: extract original event
+                RegularEvent updatedEvent = regularEvent;
+                var regularEventUpdated = new DomainEvent.RegularEventUpdated(originalEvent, updatedEvent);
+                
+                this.PublishDomainEvent(regularEventUpdated);
+            }
+
             return updated;
         }
 
@@ -58,6 +79,13 @@ namespace DomainModelling.DomainModel
         public bool DeleteRegularEvent(RegularEvent regularEvent)
         {
             bool deleted = this._regularEvents.Remove(regularEvent);
+
+            if (deleted)
+            {
+                var regularEventDeleted = new DomainEvent.RegularEventDeleted(regularEvent);
+
+                this.PublishDomainEvent(regularEventDeleted);
+            }
 
             return deleted;
         }
@@ -72,18 +100,26 @@ namespace DomainModelling.DomainModel
 
             this._recurringEvents.Add(recurringEvent.Id, recurringEvent);
 
+            var recurringEventAdded = new DomainEvent.RecurringEventAdded(recurringEvent);
+            this.PublishDomainEvent(recurringEventAdded);
+
             return true;
         }
 
 
         public bool UpdateRecurringEvent(RecurringEvent recurringEvent)
         {
-            if (!this._recurringEvents.Remove(recurringEvent.Id))
+            if (!this._recurringEvents.TryGetValue(recurringEvent.Id, out RecurringEvent originalRecurringEvent))
             {
                 return false;
             }
 
+            this._recurringEvents.Remove(recurringEvent.Id);
             this._recurringEvents.Add(recurringEvent.Id, recurringEvent);
+
+            RecurringEvent updatedRecurringEvent = recurringEvent;
+            var recurringEventUpdated = new DomainEvent.RecurringEventUpdated(originalRecurringEvent, updatedRecurringEvent);
+            this.PublishDomainEvent(recurringEventUpdated);
 
             return true;
         }
@@ -110,11 +146,16 @@ namespace DomainModelling.DomainModel
                 return false;
             }
 
+            RecurringEvent.Occurrence originalOccurence = null;
+
             //Recurrent event has overrides?
             if (this._recurringOccurrencesOverrides.TryGetValue(parentRecurringEventId, out var occurrenceOverrides))
             {
                 //If there is an old override - remove it
-                occurrenceOverrides.Remove(date);
+                if (occurrenceOverrides.TryGetValue(date, out originalOccurence))
+                {
+                    occurrenceOverrides.Remove(date);
+                }
             }
             else //No overrides - create it
             {
@@ -135,6 +176,9 @@ namespace DomainModelling.DomainModel
 
             //add submitted override
             occurrenceOverrides.Add(date, updatedOccurence);
+
+            var recurringEventOcurrenceUpdated = new DomainEvent.RecurringEventOcurrenceUpdated(originalOccurence, updatedOccurence);
+            this.PublishDomainEvent(recurringEventOcurrenceUpdated);
 
             return true;
         }
@@ -163,6 +207,11 @@ namespace DomainModelling.DomainModel
             }
 
             tombstones.Add(date);
+
+            this._recurringEvents.TryGetValue(parentRecurringEventId, out RecurringEvent parentRecurringEvent);
+
+            var recurringEventOccurrenceDeleted = new DomainEvent.RecurringEventOccurrenceDeleted(parentRecurringEvent, date);
+            this.PublishDomainEvent(recurringEventOccurrenceDeleted);
 
             // NOTE: idempotent delete
             return true;
@@ -257,6 +306,11 @@ namespace DomainModelling.DomainModel
             bool exists = this._recurringEvents.ContainsKey(recurringEventId);
 
             return exists;
+        }
+
+        private void PublishDomainEvent(DomainEvent domainEvent)
+        {
+            this._domainEvents.Add(domainEvent);
         }
     }
 }
