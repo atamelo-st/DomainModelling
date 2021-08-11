@@ -198,6 +198,12 @@ namespace DomainModelling.DomainModel
             }
         }
 
+        public static bool DatesWithinAllowedRange(DateTime periodStart, DateTime periodEnd)
+        {
+            bool withinRange = Math.Abs((periodEnd - periodStart).Days) <= 7;
+
+            return withinRange;
+        }
 
         private RecurringEvent.Occurrence ResolveOccurenceOverride(RecurringEvent.Occurrence recurringOccurrence)
         {

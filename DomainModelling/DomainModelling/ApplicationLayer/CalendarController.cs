@@ -24,6 +24,11 @@ namespace DomainModelling.ApplicationLayer
         [HttpGet]
         public IActionResult Get(DateTime periodStart, DateTime periodEnd)
         {
+            if (!Calendar.DatesWithinAllowedRange(periodStart, periodEnd))
+            {
+                return BadRequest($"Specified dates are too far apart.");
+            }
+
             Calendar calendar = this._calendarRepo.Get(periodStart, periodEnd);
 
             IEnumerable<Event> calendarEvents = calendar.GetAllEvents();
