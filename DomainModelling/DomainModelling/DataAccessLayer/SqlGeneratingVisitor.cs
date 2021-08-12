@@ -42,7 +42,7 @@ namespace DomainModelling.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public void Visit(DomainEvent.RecurringEventOcurrenceUpdated recurringEventOcurrenceUpdated)
+        public void Visit(DomainEvent.RecurringEventOccurrenceUpdated recurringEventOccurrenceUpdated)
         {
             throw new NotImplementedException();
         }

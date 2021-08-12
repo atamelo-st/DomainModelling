@@ -19,7 +19,7 @@ namespace DomainModelling.DomainModel.DomainEvents
 
         void Visit(DomainEvent.RecurringEventUpdated recurringEventUpdated);
 
-        void Visit(DomainEvent.RecurringEventOcurrenceUpdated recurringEventOcurrenceUpdated);
+        void Visit(DomainEvent.RecurringEventOccurrenceUpdated recurringEventOccurrenceUpdated);
 
         void Visit(DomainEvent.RecurringEventOccurrenceDeleted recurringEventOccurrenceDeleted);
     }

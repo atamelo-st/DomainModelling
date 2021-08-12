@@ -106,17 +106,17 @@ namespace DomainModelling.DomainModel.DomainEvents
             }
         }
 
-        public class RecurringEventOcurrenceUpdated : DomainEvent
+        public class RecurringEventOccurrenceUpdated : DomainEvent
         {
             public RecurringEvent.Occurrence OriginalEventOccurrence { get; }
             public RecurringEvent.Occurrence UpdatedEventOccurrence { get; }
 
-            public RecurringEventOcurrenceUpdated(RecurringEvent.Occurrence originalEventOccurrence, RecurringEvent.Occurrence updatedEventOccurrence) 
+            public RecurringEventOccurrenceUpdated(RecurringEvent.Occurrence originalEventOccurrence, RecurringEvent.Occurrence updatedEventOccurrence) 
                 : this(Guid.NewGuid(), originalEventOccurrence, updatedEventOccurrence)
             {
             }
 
-            public RecurringEventOcurrenceUpdated(Guid id, RecurringEvent.Occurrence originalEventOccurrence, RecurringEvent.Occurrence updatedEventOccurrence) 
+            public RecurringEventOccurrenceUpdated(Guid id, RecurringEvent.Occurrence originalEventOccurrence, RecurringEvent.Occurrence updatedEventOccurrence) 
                 : base(id)
             {
                 Guard.ThrowIf(originalEventOccurrence == null, nameof(originalEventOccurrence));

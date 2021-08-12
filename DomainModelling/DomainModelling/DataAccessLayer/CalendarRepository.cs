@@ -61,7 +61,7 @@ namespace DomainModelling.DataAccessLayer
                             break;
                         }
 
-                    case DomainEvent.RecurringEventOcurrenceUpdated recurringEventOcurrenceUpdated:
+                    case DomainEvent.RecurringEventOccurrenceUpdated recurringEventOcurrenceUpdated:
                         {
                             this.ProcessDomainEvent(recurringEventOcurrenceUpdated, sb);
                             break;
@@ -87,9 +87,9 @@ namespace DomainModelling.DataAccessLayer
             sb.AppendLine($"SQL Imitation for {recurringEventOccurrenceDeleted.GetType().Name}");
         }
 
-        private void ProcessDomainEvent(DomainEvent.RecurringEventOcurrenceUpdated recurringEventOcurrenceUpdated, StringBuilder sb)
+        private void ProcessDomainEvent(DomainEvent.RecurringEventOccurrenceUpdated recurringEventOccurrenceUpdated, StringBuilder sb)
         {
-            sb.AppendLine($"SQL Imitation for {recurringEventOcurrenceUpdated.GetType().Name}");
+            sb.AppendLine($"SQL Imitation for {recurringEventOccurrenceUpdated.GetType().Name}");
         }
 
         private void ProcessDomainEvent(DomainEvent.RecurringEventUpdated recurringEventUpdated, StringBuilder sb)

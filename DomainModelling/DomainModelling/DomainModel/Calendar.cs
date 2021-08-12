@@ -177,7 +177,7 @@ namespace DomainModelling.DomainModel
             //add submitted override
             occurrenceOverrides.Add(date, updatedOccurence);
 
-            var recurringEventOcurrenceUpdated = new DomainEvent.RecurringEventOcurrenceUpdated(originalOccurence, updatedOccurence);
+            var recurringEventOcurrenceUpdated = new DomainEvent.RecurringEventOccurrenceUpdated(originalOccurence, updatedOccurence);
             this.PublishDomainEvent(recurringEventOcurrenceUpdated);
 
             return true;
