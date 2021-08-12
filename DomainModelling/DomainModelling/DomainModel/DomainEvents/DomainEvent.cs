@@ -11,7 +11,7 @@ namespace DomainModelling.DomainModel.DomainEvents
         public Guid Id { get; }
 
 
-        protected DomainEvent(Guid id)
+        private DomainEvent(Guid id)
         {
             Guard.ThrowIf(id == default, nameof(id));
 
@@ -22,15 +22,15 @@ namespace DomainModelling.DomainModel.DomainEvents
         {
             public RegularEvent AddedEvent { get; }
 
-            public RegularEventAdded(RegularEvent adedEvent) : this(Guid.NewGuid(), adedEvent)
+            public RegularEventAdded(RegularEvent addedEvent) : this(Guid.NewGuid(), addedEvent)
             {
             }
 
-            public RegularEventAdded(Guid id, RegularEvent adedEvent) : base(id)
+            public RegularEventAdded(Guid id, RegularEvent addedEvent) : base(id)
             {
-                Guard.ThrowIf(adedEvent == null, nameof(adedEvent));
+                Guard.ThrowIf(addedEvent == null, nameof(addedEvent));
 
-                this.AddedEvent = adedEvent;
+                this.AddedEvent = addedEvent;
             }
         }
 
