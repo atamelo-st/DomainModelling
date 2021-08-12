@@ -2,6 +2,7 @@ Feature: Global Calendar
 In order to keep track of events
 As a user of the Global Calendar
 I want to be able to create, update, remove one-off (regular) and recurring events
+As well as modify single occurrences of recurring events independently of the recurring event itself
 
 	Rule: Calendar can show events for the period of time at most 7 days long
 		
