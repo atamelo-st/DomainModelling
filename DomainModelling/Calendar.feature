@@ -42,8 +42,8 @@ As well as modify single occurrences of recurring events independently of the re
 
 
 	Rule: Event end time has to be past the event start time
-		
-		Scenario: Create a one-off event with start time equal or past the end time
+
+		Scenario Outline: Create a one-off event with start time equal or past the end time
 			Given Users specify the start time to be <startTime>
 			And the end time to be <endTime>
 			When Users try to create the event
@@ -57,7 +57,7 @@ As well as modify single occurrences of recurring events independently of the re
 
 	Rule: Event time is precise down to minutes, seconds do not matter
 
-		Scenario: Create a one-off event with time specified down to seconds
+		Scenario Outline: Create a one-off event with time specified down to seconds
 			Given Users specify the <eventTitle> event's start time to be <startTime>
 			And The end time to be <endTime>
 			When Users have the <eventTitle> event created
@@ -67,7 +67,7 @@ As well as modify single occurrences of recurring events independently of the re
 			Examples:
 				| eventTitle | startTime              | endTime                | adjustedStartTime      | adjustedEndTime        |
 				| Event1     | 2020-01-01 06:00 AM    | 2020-01-01 07:00:00 AM | 2020-01-01 06:00:00 AM | 2020-01-01 07:00:00 AM |
-				| Eent2      | 2021-01-02 08:00:17 AM | 2021-01-02 08:32:01 AM | 2021-01-02 08:00:00 AM | 2021-01-02 08:32:00 AM |
+				| Event2     | 2021-01-02 08:00:17 AM | 2021-01-02 08:32:01 AM | 2021-01-02 08:00:00 AM | 2021-01-02 08:32:00 AM |
 
 
 
@@ -85,7 +85,7 @@ As well as modify single occurrences of recurring events independently of the re
 				| occurrenceDate | newTitle           |
 				| 2021-08-11     | Event1 - Wednesday |
 			And Users modify the following occurrences for the following dates to be:
-				| occurrenceDate | newendtime |
+				| occurrenceDate | newEndTime |
 				| 2021-08-12     | 10:30 AM   |
 			And Users read the calendar's events for the following period:
 				| periodStart | periodEnd  |
