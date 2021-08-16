@@ -141,16 +141,23 @@ namespace DomainModelling.ApplicationLayer
 
         [HttpPut("update-occurrence")]
         public IActionResult UpdateRecurringEventOccurrence(
-            [FromBody] Guid parentReccurringEventId,
+            [FromBody] Guid parentRecurringEventId,
             [FromBody] DateTime date,
             [FromBody] string newTitle,
             [FromBody] string newDescription,
             [FromBody] DateTimeOffset newStartTime,
-            [FromBody] DateTimeOffset newEndtime)
+            [FromBody] DateTimeOffset newEndTime)
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            bool updated = calendar.UpdateRecurringEventOccurrence(parentReccurringEventId, date, newTitle, newDescription, newStartTime, newEndtime);
+            bool occurenceExists = calendar.RecurringEventOccurrenceExists(parentRecurringEventId, date);
+
+            if (!occurenceExists)
+            {
+                return BadRequest($"Occurrence for recurring event {parentRecurringEventId} doesn't exist for {date}.");
+            }
+
+            bool updated = calendar.UpdateRecurringEventOccurrence(parentRecurringEventId, date, newTitle, newDescription, newStartTime, newEndTime);
 
             if (!updated)
             {

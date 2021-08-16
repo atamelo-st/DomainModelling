@@ -110,6 +110,11 @@ namespace DomainModelling.DomainModel
                 return false;
             }
 
+            if (!this.RecurringEventOccurrenceExists(parentRecurringEventId, date))
+            {
+                return false;
+            }
+
             //Recurrent event has overrides?
             if (this._recurringOccurrencesOverrides.TryGetValue(parentRecurringEventId, out var occurrenceOverrides))
             {
@@ -203,6 +208,16 @@ namespace DomainModelling.DomainModel
             bool withinRange = Math.Abs((periodEnd - periodStart).Days) <= 7;
 
             return withinRange;
+        }
+        
+        public bool RecurringEventOccurrenceExists(Guid parentRecurringEventId, DateTime date)
+        {
+            //TODO: implement the logic to check if an occurrence for the parent event
+            //exists for a given date.
+            //1. Extract recurring event
+            //2. Delegate the check to the event object
+            
+            return true;
         }
 
         private RecurringEvent.Occurrence ResolveOccurenceOverride(RecurringEvent.Occurrence recurringOccurrence)
