@@ -145,13 +145,13 @@ namespace DomainModelling.DomainModel
             {
                 return false;
             }
-
-            RecurringEvent.Occurrence originalOccurence = null;
-
+            
             if (!this.RecurringEventOccurrenceExists(parentRecurringEventId, date))
             {
                 return false;
             }
+
+            RecurringEvent.Occurrence originalOccurence = null;
 
             //Recurrent event has overrides?
             if (this._recurringOccurrencesOverrides.TryGetValue(parentRecurringEventId, out var occurrenceOverrides))
@@ -182,8 +182,8 @@ namespace DomainModelling.DomainModel
             //add submitted override
             occurrenceOverrides.Add(date, updatedOccurence);
 
-            var recurringEventOcurrenceUpdated = new DomainEvent.RecurringEventOccurrenceUpdated(originalOccurence, updatedOccurence);
-            this.PublishDomainEvent(recurringEventOcurrenceUpdated);
+            var recurringEventOccurrenceUpdated = new DomainEvent.RecurringEventOccurrenceUpdated(originalOccurence, updatedOccurence);
+            this.PublishDomainEvent(recurringEventOccurrenceUpdated);
 
             return true;
         }
