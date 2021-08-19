@@ -7,6 +7,6 @@ namespace DomainModelling.Application.Infrastructure
     {
         Calendar Get(DateTime periodStart, DateTime periodEnd);
 
-        int Save(Calendar calendar);
+        void Save(Calendar calendar);
     }
 }

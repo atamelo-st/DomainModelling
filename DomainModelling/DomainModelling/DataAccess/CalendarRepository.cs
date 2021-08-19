@@ -19,18 +19,19 @@ namespace DomainModelling.DataAccess
             
             var calendar = new Calendar();
             
+            //TODO: calls to Add* methods, re-building the internal the state
+            
+            //NOTE: 'resetting' the events published due to the state rebuild 
+            calendar.AcknowledgeDomainEvents();
+            
             return calendar;
         }
 
-        public int Save(Calendar calendar)
+        public void Save(Calendar calendar)
         {
             string upsertSqlStatement = this.GetSql(calendar.DomainEvents);
 
-            int numberOfAffectedRecords = -1;
-
             //TODO: execute the SQL
-
-            return numberOfAffectedRecords;
         }
 
         private string GetSql(IEnumerable<DomainEvent> domainEvents)
@@ -43,43 +44,43 @@ namespace DomainModelling.DataAccess
                 {
                     case DomainEvent.RegularEventAdded regularEventAdded:
                         {
-                            ProcessDomainEvent(regularEventAdded, sb);
+                            AppendSqlForDomainEvent(regularEventAdded, sb);
                             break;
                         }
 
                     case DomainEvent.RegularEventUpdated regularEventUpdated:
                         {
-                            ProcessDomainEvent(regularEventUpdated, sb);
+                            AppendSqlForDomainEvent(regularEventUpdated, sb);
                             break;
                         }
 
                     case DomainEvent.RegularEventDeleted regularEventDeleted:
                         {
-                            ProcessDomainEvent(regularEventDeleted, sb);
+                            AppendSqlForDomainEvent(regularEventDeleted, sb);
                             break;
                         }
 
                     case DomainEvent.RecurringEventAdded recurringEventAdded:
                         {
-                            ProcessDomainEvent(recurringEventAdded, sb);
+                            AppendSqlForDomainEvent(recurringEventAdded, sb);
                             break;
                         }
 
                     case DomainEvent.RecurringEventUpdated recurringEventUpdated:
                         {
-                            ProcessDomainEvent(recurringEventUpdated, sb);
+                            AppendSqlForDomainEvent(recurringEventUpdated, sb);
                             break;
                         }
 
                     case DomainEvent.RecurringEventOccurrenceUpdated recurringEventOcurrenceUpdated:
                         {
-                            ProcessDomainEvent(recurringEventOcurrenceUpdated, sb);
+                            AppendSqlForDomainEvent(recurringEventOcurrenceUpdated, sb);
                             break;
                         }
 
                     case DomainEvent.RecurringEventOccurrenceDeleted recurringEventOccurrenceDeleted:
                         {
-                            ProcessDomainEvent(recurringEventOccurrenceDeleted, sb);
+                            AppendSqlForDomainEvent(recurringEventOccurrenceDeleted, sb);
                             break;
                         }
 
@@ -92,37 +93,37 @@ namespace DomainModelling.DataAccess
             return sb.ToString();
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RecurringEventOccurrenceDeleted recurringEventOccurrenceDeleted, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RecurringEventOccurrenceDeleted recurringEventOccurrenceDeleted, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {recurringEventOccurrenceDeleted.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RecurringEventOccurrenceUpdated recurringEventOccurrenceUpdated, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RecurringEventOccurrenceUpdated recurringEventOccurrenceUpdated, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {recurringEventOccurrenceUpdated.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RecurringEventUpdated recurringEventUpdated, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RecurringEventUpdated recurringEventUpdated, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {recurringEventUpdated.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RecurringEventAdded recurringEventAdded, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RecurringEventAdded recurringEventAdded, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {recurringEventAdded.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RegularEventDeleted regularEventDeleted, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RegularEventDeleted regularEventDeleted, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {regularEventDeleted.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RegularEventUpdated regularEventUpdated, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RegularEventUpdated regularEventUpdated, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {regularEventUpdated.GetType().Name}");
         }
 
-        private static void ProcessDomainEvent(DomainEvent.RegularEventAdded regularEventAdded, StringBuilder sb)
+        private static void AppendSqlForDomainEvent(DomainEvent.RegularEventAdded regularEventAdded, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {regularEventAdded.GetType().Name}");
         }

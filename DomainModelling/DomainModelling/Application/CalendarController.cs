@@ -64,11 +64,11 @@ namespace DomainModelling.Application
                 return StatusCode(StatusCodes.Status409Conflict, $"Event with ID={id} already exists.");
             }
 
-            int recordsSaved = this._calendarRepo.Save(calendar);
+            this._calendarRepo.Save(calendar);
 
             this.DispatchDomainEvents(calendar);
 
-            return Ok(recordsSaved);
+            return Ok();
         }
         
 
@@ -90,11 +90,11 @@ namespace DomainModelling.Application
                 return NotFound($"Event with ID={id} was not found.");
             }
 
-            int recordsSaved = this._calendarRepo.Save(calendar);
+            this._calendarRepo.Save(calendar);
             
             this.DispatchDomainEvents(calendar);
 
-            return Ok(recordsSaved);
+            return Ok();
         }
         
 
@@ -145,11 +145,11 @@ namespace DomainModelling.Application
                 return StatusCode(StatusCodes.Status409Conflict, $"Event with ID={id} already exists.");
             }
 
-            int recordsSaved = this._calendarRepo.Save(calendar);
+            this._calendarRepo.Save(calendar);
             
             this.DispatchDomainEvents(calendar);
 
-            return Ok(recordsSaved);
+            return Ok();
         }
 
 
@@ -178,11 +178,11 @@ namespace DomainModelling.Application
                 return NotFound();
             }
 
-            int recordsSaved = this._calendarRepo.Save(calendar);
+            this._calendarRepo.Save(calendar);
             
             this.DispatchDomainEvents(calendar);
 
-            return Ok(recordsSaved);
+            return Ok();
         }
 
 
