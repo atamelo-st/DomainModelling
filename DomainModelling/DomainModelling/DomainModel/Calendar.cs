@@ -16,7 +16,7 @@ namespace DomainModelling.DomainModel
         private readonly IDictionary<Guid, HashSet<DateTime>> _recurringOccurrencesTombstones;
         private readonly List<DomainEvent> _domainEvents;
 
-        public IEnumerable<DomainEvent> DomainEvents { get => this._domainEvents; }
+        public IEnumerable<DomainEvent> DomainEvents => this._domainEvents;
 
 
         public Calendar()
@@ -221,6 +221,7 @@ namespace DomainModelling.DomainModel
             // NOTE: idempotent delete
             return true;
         }
+        
 
         //NOTE: this code craves for discriminated unions :)
         //NOTE: need interval trees data structure here; right now - naive brute-force
@@ -251,6 +252,7 @@ namespace DomainModelling.DomainModel
                 }
             }
         }
+        
 
         public static bool DatesWithinAllowedRange(DateTime periodStart, DateTime periodEnd)
         {
@@ -258,6 +260,7 @@ namespace DomainModelling.DomainModel
 
             return withinRange;
         }
+        
         
         public bool RecurringEventOccurrenceExists(Guid parentRecurringEventId, DateTime date)
         {
@@ -268,6 +271,13 @@ namespace DomainModelling.DomainModel
             
             return true;
         }
+
+
+        public void AcknowledgeDomainEvents()
+        {
+            this._domainEvents.Clear();
+        }
+        
 
         private RecurringEvent.Occurrence ResolveOccurenceOverride(RecurringEvent.Occurrence recurringOccurrence)
         {
@@ -322,6 +332,7 @@ namespace DomainModelling.DomainModel
 
             return exists;
         }
+        
 
         private void PublishDomainEvent(DomainEvent domainEvent)
         {

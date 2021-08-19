@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DomainModelling.ApplicationLayer.DataAccess;
+using DomainModelling.Application.Infrastructure;
 using DomainModelling.DomainModel;
 using DomainModelling.DomainModel.DomainEvents;
 

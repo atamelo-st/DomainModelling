@@ -1,26 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainModelling.ApplicationLayer.DataAccess;
-using Microsoft.AspNetCore.Mvc;
-using DomainModelling.DomainModel;
+using DomainModelling.Application.Infrastructure;
+using DomainModelling.Application.Presentation;
 using DomainModelling.Common;
-using DomainModelling.ApplicationLayer.Presentation;
+using DomainModelling.DomainModel;
+using DomainModelling.DomainModel.DomainEvents;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace DomainModelling.ApplicationLayer
+namespace DomainModelling.Application
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CalendarController : ControllerBase
     {
         private readonly ICalendarRepository _calendarRepo;
+        private readonly IEventBus _eventBus;
+        
 
-        public CalendarController(ICalendarRepository calendarRepo)
+        public CalendarController(ICalendarRepository calendarRepo, IEventBus eventBus)
         {
             this._calendarRepo = calendarRepo;
+            this._eventBus = eventBus;
         }
 
+        
         [HttpGet]
         public IActionResult Get(DateTime periodStart, DateTime periodEnd)
         {
@@ -40,6 +45,7 @@ namespace DomainModelling.ApplicationLayer
             return Ok(calendarViewModel);
         }
 
+        
         [HttpPut("add-regular-event")]
         public IActionResult AddRegularEvent(
             Guid id,
@@ -47,11 +53,11 @@ namespace DomainModelling.ApplicationLayer
             [FromBody] string description,
             [FromBody] DateTime date,
             [FromBody] DateTimeOffset startTime,
-            [FromBody] DateTimeOffset endtime)
+            [FromBody] DateTimeOffset endTime)
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            bool added = calendar.AddRegularEvent(id, title, description, date, startTime, endtime);
+            bool added = calendar.AddRegularEvent(id, title, description, date, startTime, endTime);
 
             if (!added)
             {
@@ -60,8 +66,11 @@ namespace DomainModelling.ApplicationLayer
 
             int recordsSaved = this._calendarRepo.Save(calendar);
 
+            this.DispatchDomainEvents(calendar);
+
             return Ok(recordsSaved);
         }
+        
 
         [HttpPut("update-regular-event")]
         public IActionResult UpdateRegularEvent(
@@ -82,9 +91,12 @@ namespace DomainModelling.ApplicationLayer
             }
 
             int recordsSaved = this._calendarRepo.Save(calendar);
+            
+            this.DispatchDomainEvents(calendar);
 
             return Ok(recordsSaved);
         }
+        
 
         [HttpPut("add-recurring-event")]
         public IActionResult AddRecurringEvent(
@@ -134,6 +146,8 @@ namespace DomainModelling.ApplicationLayer
             }
 
             int recordsSaved = this._calendarRepo.Save(calendar);
+            
+            this.DispatchDomainEvents(calendar);
 
             return Ok(recordsSaved);
         }
@@ -165,6 +179,8 @@ namespace DomainModelling.ApplicationLayer
             }
 
             int recordsSaved = this._calendarRepo.Save(calendar);
+            
+            this.DispatchDomainEvents(calendar);
 
             return Ok(recordsSaved);
         }
@@ -183,6 +199,8 @@ namespace DomainModelling.ApplicationLayer
             }
 
             this._calendarRepo.Save(calendar);
+            
+            this.DispatchDomainEvents(calendar);
 
             return Ok();
         }
@@ -214,6 +232,17 @@ namespace DomainModelling.ApplicationLayer
                     recurringEventData);
 
             return viewModel;
+        }
+
+
+        private void DispatchDomainEvents(Calendar calendar)
+        {
+            foreach (DomainEvent domainEvent in calendar.DomainEvents)
+            {
+                this._eventBus.Send(domainEvent);
+            }
+            
+            calendar.AcknowledgeDomainEvents();
         }
     }
 }

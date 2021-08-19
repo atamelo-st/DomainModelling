@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace DomainModelling.ApplicationLayer.Presentation
+namespace DomainModelling.Application.Presentation
 {
     public class CalendarViewModel
     {

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace DomainModelling.ApplicationLayer.Presentation
+namespace DomainModelling.Application.Presentation
 {
     public class EventViewModel
     {
@@ -14,7 +11,7 @@ namespace DomainModelling.ApplicationLayer.Presentation
         public DateTimeOffset StartTime { get; }
         public DateTimeOffset EndTime { get; }
         public RecurringEventData RecurringEventData { get; }
-        public bool IsRecurringEvent { get => this.RecurringEventData != null; }
+        public bool IsRecurringEvent => this.RecurringEventData != null;
 
         public EventViewModel(
             Guid id,
