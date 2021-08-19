@@ -1,26 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DomainModelling.ApplicationLayer.DataAccess;
 using DomainModelling.DomainModel;
 using DomainModelling.DomainModel.DomainEvents;
 
-
-namespace DomainModelling.DataAccessLayer
+namespace DomainModelling.DataAccess
 {
     public class CalendarRepository : ICalendarRepository
     {
         public Calendar Get(DateTime periodStart, DateTime periodEnd)
         {
-            throw new NotImplementedException();
+            //TODO:
+            //0. Instantiate a fresh instance of the Calendar class
+            //1. Read all the event (both RegularEvent and RecurringEvent) from the database for a given timeframe
+            //2. Call appropriate Calendar's Add* methods to populate the instance with data
+            //3. Return the Calendar instance
+            
+            var calendar = new Calendar();
+            
+            return calendar;
         }
 
         public int Save(Calendar calendar)
         {
             string upsertSqlStatement = this.GetSql(calendar.DomainEvents);
 
+            int numberOfAffectedRecords = -1;
+
             //TODO: execute the SQL
 
-            return -1;
+            return numberOfAffectedRecords;
         }
 
         private string GetSql(IEnumerable<DomainEvent> domainEvents)

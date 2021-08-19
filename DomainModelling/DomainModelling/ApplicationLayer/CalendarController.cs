@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DomainModelling.ApplicationLayer.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using DomainModelling.DomainModel;
 using DomainModelling.Common;
-using DomainModelling.DataAccessLayer;
 using DomainModelling.ApplicationLayer.Presentation;
 using Microsoft.AspNetCore.Http;
 
@@ -70,11 +70,11 @@ namespace DomainModelling.ApplicationLayer
             [FromBody] string description,
             [FromBody] DateTime date,
             [FromBody] DateTimeOffset startTime,
-            [FromBody] DateTimeOffset endtime)
+            [FromBody] DateTimeOffset endTime)
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            bool updated = calendar.UpdateRegularEvent(id, title, description, date, startTime, endtime);
+            bool updated = calendar.UpdateRegularEvent(id, title, description, date, startTime, endTime);
 
             if (!updated)
             {
@@ -171,15 +171,15 @@ namespace DomainModelling.ApplicationLayer
 
 
         [HttpDelete("delete-occurrence")]
-        public IActionResult DeleteRecurringEventOccurrence(Guid parentReccurringEventId, DateTime date)
+        public IActionResult DeleteRecurringEventOccurrence(Guid parentRecurringEventId, DateTime date)
         {
             Calendar calendar = this._calendarRepo.Get(date, date);
 
-            bool deleted = calendar.DeleteRecurringEventOccurrence(parentReccurringEventId, date);
+            bool deleted = calendar.DeleteRecurringEventOccurrence(parentRecurringEventId, date);
 
             if (!deleted)
             {
-                return NotFound($" Couldn't find: {parentReccurringEventId}/{date}");
+                return NotFound($" Couldn't find: {parentRecurringEventId}/{date}");
             }
 
             this._calendarRepo.Save(calendar);
