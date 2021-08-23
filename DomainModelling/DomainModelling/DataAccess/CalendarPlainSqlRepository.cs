@@ -7,32 +7,21 @@ using DomainModelling.DomainModel.DomainEvents;
 
 namespace DomainModelling.DataAccess
 {
-    public class CalendarRepository : ICalendarRepository
+    public class CalendarPlainSqlRepository : CalendarRepositoryBase
     {
-        public Calendar Get(DateTime periodStart, DateTime periodEnd)
-        {
-            //TODO:
-            //0. Instantiate a fresh instance of the Calendar class
-            //1. Read all the event (both RegularEvent and RecurringEvent) from the database for a given timeframe
-            //2. Call appropriate Calendar's Add* methods to populate the instance with data
-            //3. Return the Calendar instance
-            
-            var calendar = new Calendar();
-            
-            //TODO: calls to Add* methods, re-building the internal the state
-            
-            //NOTE: 'resetting' the events published due to the state rebuild 
-            calendar.AcknowledgeDomainEvents();
-            
-            return calendar;
-        }
-
-        public void Save(Calendar calendar)
+        public override void Save(Calendar calendar)
         {
             string upsertSqlStatement = this.GetSql(calendar.DomainEvents);
 
             //TODO: execute the SQL
         }
+
+
+        protected override IEnumerable<object> GetCalendarData(DateTime periodStart, DateTime periodEnd)
+        {
+            throw new NotImplementedException();
+        }
+
 
         private string GetSql(IEnumerable<DomainEvent> domainEvents)
         {
@@ -127,5 +116,6 @@ namespace DomainModelling.DataAccess
         {
             sb.AppendLine($"SQL Imitation for {regularEventAdded.GetType().Name}");
         }
+
     }
 }
