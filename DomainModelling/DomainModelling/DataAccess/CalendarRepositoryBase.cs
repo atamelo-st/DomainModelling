@@ -17,30 +17,33 @@ namespace DomainModelling.DataAccess
         {
             var calendar = new Calendar();
 
-            IEnumerable<object> calendarData = this.GetCalendarData(periodStart, periodEnd);            
+            IEnumerable<CalendarStorageItem> calendarData = this.GetCalendarData(periodStart, periodEnd);            
 
-            foreach (Event calendarItem in calendarData)
+            foreach (CalendarStorageItem calendarItem in calendarData)
             {
                 switch (calendarItem)
                 {
-                    //TODO: figure out what to return for an occurence override
-                    case RecurringEvent.Occurrence evt:
+                    case CalendarStorageItem.RegularEvent item:
+                        {
+                            // calendar.AddRegularEvent();
+                            break;
+                        }
+
+                    case CalendarStorageItem.RecurringEvent item:
+                        {
+                            // calendar.AddRecurringEvent();
+                            break;
+                        }
+
+                    case CalendarStorageItem.RecurringEventOverride item:
                         {
                             // calendar.UpdateRecurringEventOccurrence();
                             break;
                         }
 
-                    // TODO: handle tombstone case
-
-                    case RegularEvent evt:
+                    case CalendarStorageItem.RecurringEventTombstone item:
                         {
-                            calendar.AddRegularEvent(evt);
-                            break;
-                        }
-
-                    case RecurringEvent evt:
-                        {
-                            calendar.AddRecurringEvent(evt);
+                            // calendar.DeleteRecurringEventOccurrence();
                             break;
                         }
 
@@ -58,7 +61,17 @@ namespace DomainModelling.DataAccess
         public abstract void Save(Calendar calendar);
 
 
-        // NOTE: returns regular events, recurring events, as well as occurrences overrides & tombstones
-        protected abstract IEnumerable<object> GetCalendarData(DateTime periodStart, DateTime periodEnd);
+        protected abstract IEnumerable<CalendarStorageItem> GetCalendarData(DateTime periodStart, DateTime periodEnd);
+
+        protected abstract class CalendarStorageItem
+        {
+            public class RegularEvent : CalendarStorageItem { }
+
+            public class RecurringEvent : CalendarStorageItem { }
+
+            public class RecurringEventOverride : CalendarStorageItem { }
+
+            public class RecurringEventTombstone : CalendarStorageItem { }
+        }
     }
 }

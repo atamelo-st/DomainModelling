@@ -17,7 +17,7 @@ namespace DomainModelling.DataAccess
         }
 
 
-        protected override IEnumerable<object> GetCalendarData(DateTime periodStart, DateTime periodEnd)
+        protected override IEnumerable<CalendarStorageItem> GetCalendarData(DateTime periodStart, DateTime periodEnd)
         {
             throw new NotImplementedException();
         }
