@@ -93,6 +93,8 @@ namespace DomainModelling.DataAccess
                      default: throw new ArgumentException($"Unknown event type: '{domainEvent.GetType().Name}'");
                  }
              }
+
+             this._dbContext.SaveChanges();
         }
         
 
