@@ -15,13 +15,13 @@ namespace DomainModelling.DataAccess
 
             //TODO: execute the SQL
         }
+        
 
-
-        protected override IEnumerable<CalendarStorageItem> GetCalendarData(DateTime periodStart, DateTime periodEnd)
+        protected override Calendar RehydrateInstance(DateTime periodStart, DateTime periodEnd)
         {
             throw new NotImplementedException();
         }
-
+        
 
         private string GetSql(IEnumerable<DomainEvent> domainEvents)
         {
@@ -82,6 +82,7 @@ namespace DomainModelling.DataAccess
             return sb.ToString();
         }
 
+        
         private static void AppendSqlForDomainEvent(DomainEvent.RecurringEventOccurrenceDeleted recurringEventOccurrenceDeleted, StringBuilder sb)
         {
             sb.AppendLine($"SQL Imitation for {recurringEventOccurrenceDeleted.GetType().Name}");
@@ -116,6 +117,5 @@ namespace DomainModelling.DataAccess
         {
             sb.AppendLine($"SQL Imitation for {regularEventAdded.GetType().Name}");
         }
-
     }
 }

@@ -15,41 +15,7 @@ namespace DomainModelling.DataAccess
 
         public Calendar Get(DateTime periodStart, DateTime periodEnd)
         {
-            var calendar = new Calendar();
-
-            IEnumerable<CalendarStorageItem> calendarData = this.GetCalendarData(periodStart, periodEnd);            
-
-            foreach (CalendarStorageItem calendarItem in calendarData)
-            {
-                switch (calendarItem)
-                {
-                    case CalendarStorageItem.RegularEvent item:
-                        {
-                            // calendar.AddRegularEvent();
-                            break;
-                        }
-
-                    case CalendarStorageItem.RecurringEvent item:
-                        {
-                            // calendar.AddRecurringEvent();
-                            break;
-                        }
-
-                    case CalendarStorageItem.RecurringEventOverride item:
-                        {
-                            // calendar.UpdateRecurringEventOccurrence();
-                            break;
-                        }
-
-                    case CalendarStorageItem.RecurringEventTombstone item:
-                        {
-                            // calendar.DeleteRecurringEventOccurrence();
-                            break;
-                        }
-
-                    default: throw new ArgumentException();
-                }
-            }
+            Calendar calendar = this.RehydrateInstance(periodStart, periodEnd);
 
             //NOTE: 'resetting' the events published due to the state rebuild 
             calendar.AcknowledgeDomainEvents();
@@ -57,21 +23,8 @@ namespace DomainModelling.DataAccess
             return calendar;
         }
 
+        protected abstract Calendar RehydrateInstance(DateTime periodStart, DateTime periodEnd);
 
         public abstract void Save(Calendar calendar);
-
-
-        protected abstract IEnumerable<CalendarStorageItem> GetCalendarData(DateTime periodStart, DateTime periodEnd);
-
-        protected abstract class CalendarStorageItem
-        {
-            public class RegularEvent : CalendarStorageItem { }
-
-            public class RecurringEvent : CalendarStorageItem { }
-
-            public class RecurringEventOverride : CalendarStorageItem { }
-
-            public class RecurringEventTombstone : CalendarStorageItem { }
-        }
     }
 }
