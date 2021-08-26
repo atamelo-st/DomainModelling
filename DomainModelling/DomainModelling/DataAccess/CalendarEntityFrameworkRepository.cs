@@ -1,10 +1,7 @@
-﻿using DomainModelling.Application.Infrastructure;
-using DomainModelling.DomainModel;
+﻿using DomainModelling.DomainModel;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using DomainModelling.DomainModel.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
