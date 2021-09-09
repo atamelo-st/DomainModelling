@@ -1,8 +1,7 @@
 ﻿using System;
-using DomainModelling.Common;
+using Common;
 
-
-namespace DomainModelling.DomainModel
+namespace DomainModel
 {
     public abstract class Event
     {

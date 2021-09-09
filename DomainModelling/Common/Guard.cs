@@ -1,7 +1,6 @@
 ﻿using System;
 
-
-namespace DomainModelling.Common
+namespace Common
 {
     public static class Guard
     {

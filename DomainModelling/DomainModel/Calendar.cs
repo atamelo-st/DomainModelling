@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainModelling.DomainModel.DomainEvents;
+using DomainModel.DomainEvents;
 
-
-namespace DomainModelling.DomainModel
+namespace DomainModel
 {
     public class Calendar
     {
@@ -18,6 +17,10 @@ namespace DomainModelling.DomainModel
 
         public IEnumerable<DomainEvent> DomainEvents => this._domainEvents;
 
+        
+        // C U DELETE
+        // C(Data0) U(Data1) U(Data2) -> INSERT (Data0) -> UDPDATE(data1) -> UPDATE(Data2); INSERT (DAta0);
+        // 
 
         public Calendar()
         {

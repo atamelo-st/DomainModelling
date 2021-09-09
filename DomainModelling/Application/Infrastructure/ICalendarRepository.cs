@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainModelling.DomainModel;
+using DomainModel;
 
 namespace DomainModelling.Application.Infrastructure
 {

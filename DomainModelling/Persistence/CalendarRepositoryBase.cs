@@ -1,11 +1,8 @@
-﻿using DomainModelling.Application.Infrastructure;
-using DomainModelling.DomainModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using DomainModel;
+using DomainModelling.Application.Infrastructure;
 
-namespace DomainModelling.DataAccess
+namespace Persistence
 {
     public abstract class CalendarRepositoryBase : ICalendarRepository
     {

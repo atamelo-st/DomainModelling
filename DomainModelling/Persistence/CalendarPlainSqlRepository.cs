@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DomainModelling.Application.Infrastructure;
-using DomainModelling.DomainModel;
-using DomainModelling.DomainModel.DomainEvents;
+using DomainModel;
+using DomainModel.DomainEvents;
 
-namespace DomainModelling.DataAccess
+namespace Persistence
 {
     public class CalendarPlainSqlRepository : CalendarRepositoryBase
     {

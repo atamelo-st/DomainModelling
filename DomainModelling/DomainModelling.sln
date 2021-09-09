@@ -3,12 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModelling", "DomainModelling\DomainModelling.csproj", "{06BEEF31-385F-40AA-9179-AB08B3BF2431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModelling.AppStart", "DomainModelling.AppStart\DomainModelling.AppStart.csproj", "{06BEEF31-385F-40AA-9179-AB08B3BF2431}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{83BA3A7C-FD8B-45F7-9C87-7844A070C0BA}"
 	ProjectSection(SolutionItems) = preProject
 		Calendar.feature = Calendar.feature
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{24AE334B-7E05-4281-939A-D17EE5903474}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel", "DomainModel\DomainModel.csproj", "{37C60A27-739C-43AA-BC9D-FCBD260E7F02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel.Extensions", "DomainModel.Extensions\DomainModel.Extensions.csproj", "{712A149C-5E2E-42B0-A1E2-34B81BC9954D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{7F2C234B-FF4F-4CF2-B34A-8DD9A13ECFE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{5C5766D7-AA4D-49BE-9988-598B3C49A870}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +30,26 @@ Global
 		{06BEEF31-385F-40AA-9179-AB08B3BF2431}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06BEEF31-385F-40AA-9179-AB08B3BF2431}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06BEEF31-385F-40AA-9179-AB08B3BF2431}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24AE334B-7E05-4281-939A-D17EE5903474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24AE334B-7E05-4281-939A-D17EE5903474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24AE334B-7E05-4281-939A-D17EE5903474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24AE334B-7E05-4281-939A-D17EE5903474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37C60A27-739C-43AA-BC9D-FCBD260E7F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C60A27-739C-43AA-BC9D-FCBD260E7F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C60A27-739C-43AA-BC9D-FCBD260E7F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C60A27-739C-43AA-BC9D-FCBD260E7F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{712A149C-5E2E-42B0-A1E2-34B81BC9954D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{712A149C-5E2E-42B0-A1E2-34B81BC9954D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{712A149C-5E2E-42B0-A1E2-34B81BC9954D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{712A149C-5E2E-42B0-A1E2-34B81BC9954D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F2C234B-FF4F-4CF2-B34A-8DD9A13ECFE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F2C234B-FF4F-4CF2-B34A-8DD9A13ECFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F2C234B-FF4F-4CF2-B34A-8DD9A13ECFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F2C234B-FF4F-4CF2-B34A-8DD9A13ECFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5766D7-AA4D-49BE-9988-598B3C49A870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5766D7-AA4D-49BE-9988-598B3C49A870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5766D7-AA4D-49BE-9988-598B3C49A870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5766D7-AA4D-49BE-9988-598B3C49A870}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

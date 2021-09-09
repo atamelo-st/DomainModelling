@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainModelling.Application.Infrastructure;
 using DomainModelling.Application.Presentation;
-using DomainModelling.Common;
-using DomainModelling.DomainModel;
-using DomainModelling.DomainModel.DomainEvents;
+using DomainModel.Extensions;
+using DomainModel;
+using DomainModel.DomainEvents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

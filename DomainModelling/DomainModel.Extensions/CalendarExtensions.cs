@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DomainModelling.DomainModel;
 
-namespace DomainModelling.Common
+namespace DomainModel.Extensions
 {
     public static class CalendarExtensions
     {

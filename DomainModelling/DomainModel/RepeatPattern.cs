@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
-namespace DomainModelling.DomainModel
+namespace DomainModel
 {
     public abstract class RepeatPattern
     {

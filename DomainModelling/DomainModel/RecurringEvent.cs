@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainModelling.Common;
+using Common;
 
-
-namespace DomainModelling.DomainModel
+namespace DomainModel
 {
     public class RecurringEvent : Event
     {
