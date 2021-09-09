@@ -1,7 +1,7 @@
 ﻿using System;
 using DomainModel;
 
-namespace DomainModelling.Application.Infrastructure
+namespace Application.Infrastructure
 {
     public interface ICalendarRepository
     {

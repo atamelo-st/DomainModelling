@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DomainModelling.Application.Presentation
+namespace Application.Presentation
 {
     public class EventViewModel
     {

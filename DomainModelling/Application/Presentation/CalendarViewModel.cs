@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DomainModelling.Application.Presentation
+namespace Application.Presentation
 {
     public class CalendarViewModel
     {

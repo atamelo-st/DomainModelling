@@ -1,4 +1,4 @@
-using DomainModelling.Application.Infrastructure;
+using Application.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,4 @@
-﻿namespace DomainModelling.Application.Infrastructure
+﻿namespace Application.Infrastructure
 {
     public interface IEventBus
     {

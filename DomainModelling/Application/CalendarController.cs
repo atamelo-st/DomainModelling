@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Application.Infrastructure;
+using Application.Presentation;
 using DomainModel;
 using DomainModel.DomainEvents;
 using DomainModel.Extensions;
-using DomainModelling.Application.Infrastructure;
-using DomainModelling.Application.Presentation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
