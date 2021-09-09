@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainModelling.Application.Infrastructure;
-using DomainModelling.Application.Presentation;
-using DomainModel.Extensions;
 using DomainModel;
 using DomainModel.DomainEvents;
+using DomainModel.Extensions;
+using DomainModelling.Application.Infrastructure;
+using DomainModelling.Application.Presentation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DomainModelling.Application
+namespace Application
 {
     [Route("api/[controller]")]
     [ApiController]
