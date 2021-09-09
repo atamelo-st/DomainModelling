@@ -1,8 +1,10 @@
+using DomainModelling.Application.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Persistence;
 
 namespace DomainModelling.AppStart
 {
@@ -20,6 +22,8 @@ namespace DomainModelling.AppStart
         {
 
             services.AddControllers();
+            
+            services.AddScoped<ICalendarRepository, CalendarPlainSqlRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
